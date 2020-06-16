@@ -1,0 +1,29 @@
+{
+  "name": "locustjs-pagination",
+  "version": "1.0.0",
+  "description": "This library provides utilities regarding paging and pagination for data grids",
+  "main": "index.cjs.js",
+  "module": "index.esm.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ironcodev/locustjs-pagination.git"
+  },
+  "keywords": [
+    "locustjs",
+    "javascript",
+    "pagination",
+    "paging"
+  ],
+  "author": "Iron Code",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ironcodev/locustjs-pagination/issues"
+  },
+  "homepage": "https://github.com/ironcodev/locustjs-pagination#readme",
+  "dependencies": {
+    "locustjs-base": "^1.0.5"
+  }
+}
