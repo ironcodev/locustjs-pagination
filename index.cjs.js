@@ -3,14 +3,39 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.setMaxVisiblePages = exports.setMaxPageSize = exports.pagingCalc = void 0;
+exports.pagingCalc = void 0;
 
 var _locustjsBase = require("locustjs-base");
 
-var MAX_PAGE_SIZE = 200;
-var MAX_VISIBLE_PAGES = 20;
+var pagingCalc = function pagingCalc(page, recordCount, pageSize, visiblePages, options) {
+  var _options = Object.assign({
+    maxPageSize: 500,
+    maxVisiblePages: 50,
+    defaultPage: 1,
+    defaultPageSize: 10,
+    defaultVisiblePages: 10
+  }, options);
 
-var pagingCalc = function pagingCalc(page, recordCount, pageSize, visiblePages) {
+  if (!(0, _locustjsBase.isNumeric)(_options.maxPageSize) || _options.maxPageSize < 0) {
+    _options.maxPageSize = 500;
+  }
+
+  if (!(0, _locustjsBase.isNumeric)(_options.maxVisiblePages) || _options.maxVisiblePages < 0) {
+    _options.maxVisiblePages = 50;
+  }
+
+  if (!(0, _locustjsBase.isNumeric)(_options.defaultPage) || _options.defaultPage < 0) {
+    _options.defaultPage = 1;
+  }
+
+  if (!(0, _locustjsBase.isNumeric)(_options.defaultPageSize) || _options.defaultPageSize < 0) {
+    _options.defaultPageSize = 10;
+  }
+
+  if (!(0, _locustjsBase.isNumeric)(_options.defaultVisiblePages) || _options.defaultVisiblePages < 0) {
+    _options.defaultVisiblePages = 10;
+  }
+
   var result = {
     page: page,
     recordCount: recordCount,
@@ -19,23 +44,36 @@ var pagingCalc = function pagingCalc(page, recordCount, pageSize, visiblePages) 
     pageCount: 0
   };
 
-  if (!(0, _locustjsBase.isNumeric)(result.page) || result.page < 1) {
-    result.page = 1;
+  if (!(0, _locustjsBase.isNumeric)(result.page)) {
+    result.page = _options.defaultPage;
   }
 
   result.page = parseInt(result.page);
 
-  if (!(0, _locustjsBase.isNumeric)(result.pageSize) || result.pageSize < 1 || result.pageSize > MAX_PAGE_SIZE) {
-    result.pageSize = 10;
+  if (result.page < 1) {
+    result.page = _options.defaultPage;
+  }
+
+  if (!(0, _locustjsBase.isNumeric)(result.pageSize)) {
+    result.pageSize = _options.defaultPageSize;
   }
 
   result.pageSize = parseInt(result.pageSize);
 
-  if (!(0, _locustjsBase.isNumeric)(result.recordCount) || result.recordCount < 0) {
+  if (result.pageSize < 1 || result.pageSize > _options.maxPageSize) {
+    result.pageSize = _options.defaultPageSize;
+  }
+
+  if (!(0, _locustjsBase.isNumeric)(result.recordCount)) {
     result.recordCount = 0;
   }
 
   result.recordCount = parseInt(result.recordCount);
+
+  if (result.recordCount < 0) {
+    result.recordCount = 0;
+  }
+
   result.pageCount = Math.floor(result.recordCount / result.pageSize);
 
   if (result.pageCount == 0) {
@@ -50,8 +88,8 @@ var pagingCalc = function pagingCalc(page, recordCount, pageSize, visiblePages) 
     result.page = result.pageCount;
   }
 
-  if (!(0, _locustjsBase.isNumeric)(result.visiblePages) || result.visiblePages < 0 || result.visiblePages > MAX_VISIBLE_PAGES) {
-    result.visiblePages = 8;
+  if (!(0, _locustjsBase.isNumeric)(result.visiblePages) || result.visiblePages < 0 || result.visiblePages > _options.maxVisiblePages) {
+    result.visiblePages = _options.defaultVisiblePages;
   }
 
   result.fromPage = Math.ceil(result.page / result.visiblePages);
@@ -73,19 +111,3 @@ var pagingCalc = function pagingCalc(page, recordCount, pageSize, visiblePages) 
 };
 
 exports.pagingCalc = pagingCalc;
-
-var setMaxPageSize = function setMaxPageSize(pageSize) {
-  if ((0, _locustjsBase.isNumeric)(pageSize)) {
-    MAX_PAGE_SIZE = parseInt(pageSize);
-  }
-};
-
-exports.setMaxPageSize = setMaxPageSize;
-
-var setMaxVisiblePages = function setMaxVisiblePages(visiblePages) {
-  if ((0, _locustjsBase.isNumeric)(visiblePages)) {
-    MAX_VISIBLE_PAGES = parseInt(visiblePages);
-  }
-};
-
-exports.setMaxVisiblePages = setMaxVisiblePages;

@@ -1,9 +1,34 @@
 import { isNumeric } from 'locustjs-base';
 
-let MAX_PAGE_SIZE = 200;
-let MAX_VISIBLE_PAGES = 20;
+const pagingCalc = function (page, recordCount, pageSize, visiblePages, options) {
+	const _options = Object.assign({
+		maxPageSize: 500,
+		maxVisiblePages: 50,
+		defaultPage: 1,
+		defaultPageSize: 10,
+		defaultVisiblePages: 10
+	}, options);
 
-const pagingCalc = function (page, recordCount, pageSize, visiblePages) {
+	if (!isNumeric(_options.maxPageSize) || _options.maxPageSize < 0) {
+		_options.maxPageSize = 500;
+	}
+
+	if (!isNumeric(_options.maxVisiblePages) || _options.maxVisiblePages < 0) {
+		_options.maxVisiblePages = 50;
+	}
+
+	if (!isNumeric(_options.defaultPage) || _options.defaultPage < 0) {
+		_options.defaultPage = 1;
+	}
+
+	if (!isNumeric(_options.defaultPageSize) || _options.defaultPageSize < 0) {
+		_options.defaultPageSize = 10;
+	}
+
+	if (!isNumeric(_options.defaultVisiblePages) || _options.defaultVisiblePages < 0) {
+		_options.defaultVisiblePages = 10;
+	}
+
 	const result = {
 		page: page,
 		recordCount: recordCount,
@@ -12,24 +37,35 @@ const pagingCalc = function (page, recordCount, pageSize, visiblePages) {
 		pageCount: 0
 	};
 
-
-	if (!isNumeric(result.page) || result.page < 1) {
-		result.page = 1
+	if (!isNumeric(result.page)) {
+		result.page = _options.defaultPage
 	}
 
 	result.page = parseInt(result.page);
 
-	if (!isNumeric(result.pageSize) || result.pageSize < 1 || result.pageSize > MAX_PAGE_SIZE) {
-		result.pageSize = 10
+	if (result.page < 1) {
+		result.page = _options.defaultPage
+	}
+
+	if (!isNumeric(result.pageSize)) {
+		result.pageSize = _options.defaultPageSize
 	}
 
 	result.pageSize = parseInt(result.pageSize);
 
-	if (!isNumeric(result.recordCount) || result.recordCount < 0) {
+	if (result.pageSize < 1 || result.pageSize > _options.maxPageSize) {
+		result.pageSize = _options.defaultPageSize
+	}
+
+	if (!isNumeric(result.recordCount)) {
 		result.recordCount = 0
 	}
 
 	result.recordCount = parseInt(result.recordCount);
+
+	if (result.recordCount < 0) {
+		result.recordCount = 0
+	}
 
 	result.pageCount = Math.floor(result.recordCount / result.pageSize);
 
@@ -45,8 +81,8 @@ const pagingCalc = function (page, recordCount, pageSize, visiblePages) {
 		result.page = result.pageCount;
 	}
 
-	if (!isNumeric(result.visiblePages) || result.visiblePages < 0 || result.visiblePages > MAX_VISIBLE_PAGES) {
-		result.visiblePages = 8;
+	if (!isNumeric(result.visiblePages) || result.visiblePages < 0 || result.visiblePages > _options.maxVisiblePages) {
+		result.visiblePages = _options.defaultVisiblePages;
 	}
 
 	result.fromPage = Math.ceil(result.page / result.visiblePages);
@@ -67,16 +103,4 @@ const pagingCalc = function (page, recordCount, pageSize, visiblePages) {
 	return result;
 }
 
-const setMaxPageSize = function(pageSize) {
-	if (isNumeric(pageSize)) {
-		MAX_PAGE_SIZE = parseInt(pageSize);
-	}
-}
-
-const setMaxVisiblePages = function(visiblePages) {
-	if (isNumeric(visiblePages)) {
-		MAX_VISIBLE_PAGES = parseInt(visiblePages);
-	}
-}
-
-export { pagingCalc, setMaxPageSize, setMaxVisiblePages }
+export { pagingCalc }
