@@ -1,6 +1,6 @@
 {
   "name": "@locustjs/pagination",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "This library provides utilities regarding paging and pagination for data grids",
   "main": "index.cjs.js",
   "module": "index.esm.js",

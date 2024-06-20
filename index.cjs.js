@@ -1,4 +1,4 @@
-import { isNumeric } from "locustjs-base";
+import { isNumeric } from "@locustjs/base";
 const validateOptions = options => {
   const result = Object.assign({
     maxPageSize: 500,
