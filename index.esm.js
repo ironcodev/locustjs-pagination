@@ -1,106 +1,129 @@
-import { isNumeric } from 'locustjs-base';
+import { isNumeric } from "locustjs-base";
 
-const pagingCalc = function (page, recordCount, pageSize, visiblePages, options) {
-	const _options = Object.assign({
-		maxPageSize: 500,
-		maxVisiblePages: 50,
-		defaultPage: 1,
-		defaultPageSize: 10,
-		defaultVisiblePages: 10
-	}, options);
+const validateOptions = (options) => {
+  const result = Object.assign(
+    {
+      maxPageSize: 500,
+      maxVisiblePages: 50,
+      defaultPage: 1,
+      defaultPageSize: 10,
+      defaultVisiblePages: 10,
+    },
+    options
+  );
 
-	if (!isNumeric(_options.maxPageSize) || _options.maxPageSize < 0) {
-		_options.maxPageSize = 500;
-	}
+  if (!isNumeric(result.maxPageSize) || result.maxPageSize < 0) {
+    result.maxPageSize = 500;
+  }
 
-	if (!isNumeric(_options.maxVisiblePages) || _options.maxVisiblePages < 0) {
-		_options.maxVisiblePages = 50;
-	}
+  if (!isNumeric(result.maxVisiblePages) || result.maxVisiblePages < 0) {
+    result.maxVisiblePages = 50;
+  }
 
-	if (!isNumeric(_options.defaultPage) || _options.defaultPage < 0) {
-		_options.defaultPage = 1;
-	}
+  if (!isNumeric(result.defaultPage) || result.defaultPage < 0) {
+    result.defaultPage = 1;
+  }
 
-	if (!isNumeric(_options.defaultPageSize) || _options.defaultPageSize < 0) {
-		_options.defaultPageSize = 10;
-	}
+  if (!isNumeric(result.defaultPageSize) || result.defaultPageSize < 0) {
+    result.defaultPageSize = 10;
+  }
 
-	if (!isNumeric(_options.defaultVisiblePages) || _options.defaultVisiblePages < 0) {
-		_options.defaultVisiblePages = 10;
-	}
+  if (
+    !isNumeric(result.defaultVisiblePages) ||
+    result.defaultVisiblePages < 0
+  ) {
+    result.defaultVisiblePages = 10;
+  }
 
-	const result = {
-		page: page,
-		recordCount: recordCount,
-		pageSize: pageSize,
-		visiblePages: visiblePages,
-		pageCount: 0
-	};
+  return result;
+};
 
-	if (!isNumeric(result.page)) {
-		result.page = _options.defaultPage
-	}
+const pagingCalc = function (
+  page,
+  recordCount,
+  pageSize,
+  visiblePages,
+  options
+) {
+  options = validateOptions(options);
 
-	result.page = parseInt(result.page);
+  const result = {
+    page: page,
+    recordCount: recordCount,
+    pageSize: pageSize,
+    visiblePages: visiblePages,
+    pageCount: 0,
+  };
 
-	if (result.page < 1) {
-		result.page = _options.defaultPage
-	}
+  if (!isNumeric(result.page)) {
+    result.page = options.defaultPage;
+  }
 
-	if (!isNumeric(result.pageSize)) {
-		result.pageSize = _options.defaultPageSize
-	}
+  result.page = parseInt(result.page);
 
-	result.pageSize = parseInt(result.pageSize);
+  if (result.page < 1) {
+    result.page = options.defaultPage;
+  }
 
-	if (result.pageSize < 1 || result.pageSize > _options.maxPageSize) {
-		result.pageSize = _options.defaultPageSize
-	}
+  if (!isNumeric(result.pageSize)) {
+    result.pageSize = options.defaultPageSize;
+  }
 
-	if (!isNumeric(result.recordCount)) {
-		result.recordCount = 0
-	}
+  result.pageSize = parseInt(result.pageSize);
 
-	result.recordCount = parseInt(result.recordCount);
+  if (result.pageSize < 1 || result.pageSize > options.maxPageSize) {
+    result.pageSize = options.defaultPageSize;
+  }
 
-	if (result.recordCount < 0) {
-		result.recordCount = 0
-	}
+  if (!isNumeric(result.recordCount)) {
+    result.recordCount = 0;
+  }
 
-	result.pageCount = Math.floor(result.recordCount / result.pageSize);
+  result.recordCount = parseInt(result.recordCount);
 
-	if (result.pageCount == 0) {
-		result.pageCount = 1;
-	}
+  if (result.recordCount < 0) {
+    result.recordCount = 0;
+  }
 
-	if (result.recordCount > result.pageCount * result.pageSize) {
-		result.pageCount++;
-	}
+  result.pageCount = Math.floor(result.recordCount / result.pageSize);
 
-	if (result.pageCount > 0 && result.page > result.pageCount) {
-		result.page = result.pageCount;
-	}
+  if (result.recordCount > result.pageCount * result.pageSize) {
+    result.pageCount++;
+  }
 
-	if (!isNumeric(result.visiblePages) || result.visiblePages < 0 || result.visiblePages > _options.maxVisiblePages) {
-		result.visiblePages = _options.defaultVisiblePages;
-	}
+  if (result.page > result.pageCount) {
+    result.page = result.pageCount;
+  }
 
-	result.fromPage = Math.ceil(result.page / result.visiblePages);
-	result.fromPage = (result.fromPage - 1) * result.visiblePages + 1;
-	result.toPage = result.fromPage + result.visiblePages - 1;
+  if (
+    !isNumeric(result.visiblePages) ||
+    result.visiblePages < 0 ||
+    result.visiblePages > options.maxVisiblePages
+  ) {
+    result.visiblePages = options.defaultVisiblePages;
+  }
 
-	if (result.toPage > result.pageCount) {
-		result.toPage = result.pageCount;
-	}
+  result.fromPage = Math.ceil(result.page / result.visiblePages);
+  result.fromPage = (result.fromPage - 1) * result.visiblePages + 1;
+  result.toPage = result.fromPage + result.visiblePages - 1;
 
-	result.fromRow = (result.page - 1) * result.pageSize + 1;
-	result.toRow = result.fromRow + result.pageSize - 1;
+  if (result.toPage > result.pageCount) {
+    result.toPage = result.pageCount;
+  }
 
-	if (result.toRow > result.recordCount) {
-		result.toRow = result.recordCount;
-	}
+  result.fromRow = (result.page - 1) * result.pageSize + 1;
 
-	return result;
-}
+  if (result.fromRow < 0) {
+	result.fromRow = 1;
+  }
 
-export { pagingCalc }
+  result.toRow = result.fromRow + result.pageSize - 1;
+
+  if (result.toRow > result.recordCount) {
+    result.toRow = result.recordCount;
+  }
+
+  return result;
+};
+
+export { pagingCalc };

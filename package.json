@@ -1,10 +1,11 @@
 {
-  "name": "locustjs-pagination",
-  "version": "1.0.1",
+  "name": "@locustjs/pagination",
+  "version": "2.0.0",
   "description": "This library provides utilities regarding paging and pagination for data grids",
   "main": "index.cjs.js",
   "module": "index.esm.js",
   "scripts": {
+    "build": "babel index.esm.js -o index.cjs.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,7 +24,12 @@
     "url": "https://github.com/ironcodev/locustjs-pagination/issues"
   },
   "homepage": "https://github.com/ironcodev/locustjs-pagination#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6"
+  },
   "dependencies": {
-    "locustjs-base": "^1.0.5"
+    "@locustjs/base": "^4.0.0"
   }
 }

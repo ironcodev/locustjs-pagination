@@ -1,10 +1,14 @@
-# locustjs-pagination
+# @locustjs/pagination
 This library provides utilities regarding paging and pagination for data grids.
 
-The library contains a pagingCalc() function that helps calculating paging based on a given recordcount, pagesize and current page.
+# Install
+```
+npm i @locustjs/pagination
+```
 
-Here is an example:
+The library contains a `pagingCalc` function that helps calculating paging based on a given recordcount, pagesize and current page.
 
+Example:
 ```javascript
 import { pagingCalc } from 'locustjs-pagination';
 
